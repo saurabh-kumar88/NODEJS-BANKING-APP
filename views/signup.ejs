@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Registration</title>
+    
+    <style>
+        .form-container {
+        margin: auto;
+        margin-top:10px;
+        margin-bottom: 15px;
+        width: 50%;
+        border: 2px solid green;
+        padding: 10px;
+        background-color: white;
+        }
+
+        input[type=text], input[type=password], input[type=email] {
+        width: 100%;
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        display: inline-block;
+        border: none;
+        background: #f1f1f1;
+        }
+
+        input[type=text]:focus, input[type=password]:focus {
+        background-color: #ddd;
+        outline: none;
+        }
+
+        .input-requirements {
+        font-size: 1.05rem;
+        text-align: left;
+        list-style-type: disc;
+        list-style-position: inside;
+        max-width: 400px;
+        margin: 0 0 0 10px;
+        color: rgb(150, 150, 150);
+        }
+
+        .input-requirements li.invalid {
+        color: #e74c3c;
+        }
+        .input-requirements li.valid {
+        color: #2ecc71;
+        }
+
+        .input-requirements li.valid:after {
+        display: inline-block;
+        padding-left: 10px;
+        content: "\2713";
+        }
+        
+        .login-link {
+            margin-top:10px;
+        }
+
+        .btn {
+            margin-left : 50%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+    </style>
+    
+</head>
+<body onload="formValidation()">
+    
+    <div class="form-container">
+        <h1>New Registration here..!</h1>
+        <form id="registration" action="/users/handle-signup" method="POST">
+            <label for="username"><b>Create user name</b> <br>
+                <input type="text" id="username" name="name" placeholder="    UserName    "  required/>
+                <ul class="input-requirements">
+                    <li>At least 5 characters long</li>
+                    <li>Must only contain letters and numbers (no special characters)</li>
+                </ul>
+            <br>
+
+            <label for="email"><b>Enter your email address</b> <br>
+                <input type="email" name="email" id="email" placeholder="    Email    " required /> <br>
+                <ul class="input-requirements">
+                    <li>Must be valid email address</li>
+                </ul>
+            </label><br>
+
+            <label for="password"><b>Create password as the rules given below</b> <br>
+                <input type="password" id="password" name="password" placeholder="    password    "  required/> <br>
+                <ul class="input-requirements">
+                    <li>At least 8 characters long (and less than 100 characters)</li>
+					<li>Contains at least 1 number</li>
+					<li>Contains at least 1 lowercase letter</li>
+					<li>Contains at least 1 uppercase letter</li>
+					<li>Contains a special character (e.g. @ !)</li>
+                </ul>
+            </label><br>
+
+            <label for="re-password"><b>Re type the password</b> <br>
+                <input type="password" id="re-password" name="re_password" placeholder="    Re-password    " required/><br>
+                <ul class="input-requirements">
+                    <li>Password matched</li>
+                </ul>
+            </label><br>
+
+            <button  class="btn" type="submit">Submit</button> 
+            <div class="login-link">Already registered! <a href="/users/login">Login</a></div>
+        </form>        
+    </div>
+
+<script>
+
+function formValidation() {
+    var form = document.getElementById("registration");
+    var username = document.getElementById("username");
+    var email = document.getElementById("email");
+    var password = document.getElementById("password");
+    var re_password = document.getElementById("re-password");
+
+function isValid_Input(isValid, checkInputRule) {
+    if(isValid) {
+        checkInputRule.classList.remove('invalid');
+        checkInputRule.classList.add('valid');
+        
+    } else {
+        checkInputRule.classList.add('invalid');
+        checkInputRule.classList.remove('valid');        
+    }
+};
+
+
+
+username.addEventListener('keyup', (event) => {
+    event.preventDefault();
+    
+    var username_rule_1 = document.querySelector('label[for="username"] li:nth-child(1)');
+    var username_rule_2 = document.querySelector('label[for="username"] li:nth-child(2)');
+
+    if(username.value.length < 5)
+    {
+        isValid_Input(false, username_rule_1);
+
+    } else {   
+        isValid_Input(true, username_rule_1);
+    }
+
+    if( username.value.match(/[^a-zA-Z0-9]/g) || username.value.length == 0 ) {
+
+        isValid_Input(false, username_rule_2);
+    }
+    else {
+        isValid_Input(true, username_rule_2);
+    }
+
+});
+
+email.addEventListener("keyup", function(event) {
+
+    var email_rule_1 = document.querySelector('label[for="email"] li:nth-child(1)');
+    if( email.validity.typeMismatch ) {
+        isValid_Input(false, email_rule_1);
+    } else {
+        isValid_Input(true, email_rule_1);
+    }
+});
+
+
+password.addEventListener("keyup", function(event) {
+    event.preventDefault();
+    
+    var password_rule_1 = document.querySelector('label[for="password"] li:nth-child(1)'); // length
+    var password_rule_2 = document.querySelector('label[for="password"] li:nth-child(2)'); // numbers
+    var password_rule_3 = document.querySelector('label[for="password"] li:nth-child(3)'); // Uppercase
+    var password_rule_4 = document.querySelector('label[for="password"] li:nth-child(4)'); // lowercase
+    var password_rule_5 = document.querySelector('label[for="password"] li:nth-child(5)'); // Special char
+    
+
+    if(password.value.length < 8)
+    {
+        isValid_Input(false, password_rule_1);
+    } else {   
+        isValid_Input(true, password_rule_1);
+    }
+
+    if( !password.value.match(/[0-9]/g) || password.value.length == 0) {
+
+        isValid_Input(false, password_rule_2);
+    }
+    else {
+        isValid_Input(true, password_rule_2);
+    }
+    
+    
+    if( !password.value.match(/[a-z]/g) || password.value.length == 0 ) {
+
+        isValid_Input(false, password_rule_3);
+    }
+    else {
+        isValid_Input(true, password_rule_3);
+    }
+
+    if( !password.value.match(/[A-Z]/g) || password.value.length == 0 ) {
+
+        isValid_Input(false, password_rule_4);
+    }
+    else {
+        isValid_Input(true, password_rule_4);
+    }
+
+    if( !password.value.match(/[\!\@\#\$\%\^\&\*]/g) || password.value.length == 0) {
+
+        isValid_Input(false, password_rule_5);
+    }
+    else {
+        isValid_Input(true, password_rule_5);
+        
+    }
+    
+
+});
+
+re_password.addEventListener("keyup", function(event) {
+    
+    var re_password_rule_1 = document.querySelector('label[for="re-password"] li:nth-child(1)'); // length
+    
+    if( re_password.value !== password.value || re_password.value.length === 0) {
+        isValid_Input(false, re_password_rule_1);
+    } else {
+        isValid_Input(true, re_password_rule_1);
+    }
+});
+
+
+
+form.addEventListener("submit", function(event) {
+    
+    if(  username.value.length < 5
+        || username.value.match(/[^a-zA-Z0-9]/g) 
+        || !username.value.match(/[a-zA-Z0-9]/g) 
+        || !password.value.match(/[a-z]/g)
+        || !password.value.match(/[A-Z]/g)
+        || !password.value.match(/[0-9]/g)
+        || !password.value.match(/[\!\@\#\$\%\^\&\*]/g)
+        || re_password.value !== password.value ) {    
+        event.preventDefault();
+        }
+    });
+
+}
+
+</script>
+
+</body>
+</html>
+
