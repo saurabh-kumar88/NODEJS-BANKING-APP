@@ -32,9 +32,10 @@ const handleSignup = async (req, res, next ) => {
 
         const existingUser = await Users.findOne({ email: email });
         if (existingUser) {
-            const err = new Error("E-Mail address already exists.");
-            err.statusCode = 422;
-            throw err;
+            // const err = new Error("E-Mail address already exists.");
+            // err.statusCode = 422;
+            throw "E-Mail address already exists.";
+            
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -55,6 +56,8 @@ const handleSignup = async (req, res, next ) => {
     } catch(err) {
         next(err);
     }
+
+    
 
 
 
