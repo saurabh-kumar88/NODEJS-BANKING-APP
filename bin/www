@@ -27,10 +27,11 @@ app.set('view engine' , 'ejs');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
+require('dotenv/config');
 
 try {
   mongoose.connect(
-    "mongodb://sau88:imgoingin@cluster0-shard-00-00.lw6yi.mongodb.net:27017,cluster0-shard-00-01.lw6yi.mongodb.net:27017,cluster0-shard-00-02.lw6yi.mongodb.net:27017/banking-app?ssl=true&replicaSet=atlas-a2ud9i-shard-0&authSource=admin&retryWrites=true&w=majority",
+    process.env.ATLAS_URI,
     { useNewUrlParser : true , useUnifiedTopology : true}   
   );
 } catch (error) {
