@@ -1,12 +1,11 @@
+require('dotenv/config');
 const { validationResult } = require("express-validator");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-
-
-
+const transporter = require("../emails/transport");
+const { emailConfirmationTemplate } = require("../emails/templates");
 const Users = require("../models/users");
 
 // signup
@@ -31,12 +30,12 @@ const handleSignup = async (req, res, next ) => {
         }
 
         const existingUser = await Users.findOne({ email: email });
-        if (existingUser) {
-            // const err = new Error("E-Mail address already exists.");
-            // err.statusCode = 422;
-            throw "E-Mail address already exists.";
+        // if (existingUser) {
+        //     // const err = new Error("E-Mail address already exists.");
+        //     // err.statusCode = 422;
+        //     throw "E-Mail address already exists.";
             
-        }
+        // }
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const activationToken = (await promisify(randomBytes)(20)).toString("hex");
@@ -48,18 +47,26 @@ const handleSignup = async (req, res, next ) => {
         });
         const savedUser = await user.save();
 
-        res.status(201).json({
-            message: "User successfully created.",
-            userId: savedUser._id,
-          });
+        // res.status(201).json({
+        //     message: "User successfully created.",
+        //     userId: savedUser._id,
+        //   });
+        
+        await transporter.sendMail({
+            from : process.env.HOST_EMAIL,
+            to : savedUser.email,
+            subject :"Confirm your email",
+            html:emailConfirmationTemplate(savedUser.activationToken),
+        },
+        function(err, info){
+            if(err) res.send(err);
+            else res.send("Email has been sended " + info.response);
+        });
+
         
     } catch(err) {
         next(err);
     }
-
-    
-
-
 
 };
 
