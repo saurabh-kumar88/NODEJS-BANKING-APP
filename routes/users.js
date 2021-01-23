@@ -28,21 +28,13 @@ router.post('/handle-signup', [ nameValidator,
         emailValidator ], 
         userController.handleSignup );
 
+router.get('/accountActivation/:token', userController.accountActivation );
+router.get('/dashboard', userController.dashboard );
 
 
-        
 router.get('/login', userController.login );
 router.post('/login', userController.handleLogin );
 
 
-// live:.cid.8e71742241aaeb4a
-
-/** POST requests */
-
-
-
-
-
-      
 
 module.exports = router;

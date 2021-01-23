@@ -70,22 +70,59 @@ const handleSignup = async (req, res, next ) => {
 
 };
 
+const accountActivation = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const user = await Users.findOne({ token : token });
+        if(!user) return res.redirect("/");
+        const expireIn = 1000 * 60 * 60 * 60 * 24;
+
+        if((Date.now() - user.createdAt) > expireIn) {
+            await user.remove();
+            return res.redirect("/");
+        }
+
+        user.active = true;
+        await user.save();
+
+        req.session.user = user;
+        return res.redirect("/");
+        
+    } catch (error) {
+        res.sendStatus(404);
+    }
+}
+
 
 // login
-const login = (req, res ) => {  
+const login = async (req, res ) => {  
     res.render('login');
 };
 
 // handleLogin  
-const handleLogin = ( req, res ) => {
+const handleLogin = async ( req, res ) => {
     res.send('logged In');
     console.log(req.body);
 };
+
+// user dashboard
+const dashboard = async (req, res) => {
+
+    if( !req.session.user || !req.session.user.confirmed) {
+        return res.redirect("/");
+    }
+    next();
+ }
+
+
 
 module.exports = {
     login,
     handleLogin,
     signup,
     handleSignup,
+    accountActivation,
+    dashboard,
     
 };
