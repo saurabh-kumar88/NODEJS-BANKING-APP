@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const transporter = require("../emails/transport");
 const { emailConfirmationTemplate } = require("../emails/templates");
 const Users = require("../models/users");
+const { type } = require('os');
 
 // signup
 const signup = (req, res ) => {  
@@ -60,7 +61,8 @@ const handleSignup = async (req, res, next ) => {
         },
         function(err, info){
             if(err) res.send(err);
-            else res.send("Email has been sended " + info.response);
+            else res.send(`<h1>An varification link has been sended to your email id ${user.email}</h1> <br>
+            <p>Please varify your email</p>`);
         });
 
         
@@ -70,42 +72,109 @@ const handleSignup = async (req, res, next ) => {
 
 };
 
-const accountActivation = async (req, res) => {
-    const token  = req.params.token;
-
-    console.log('____________________________________')
-    console.log( req.params.token )
-    res.send('<h1>Welcome Back</h1>');
-
-    // try {
-    //     const user = await Users.findOne({ token : token });
-    //     if(!user) return res.redirect("/");
-    //     const expireIn = 1000 * 60 * 60 * 60 * 24;
-
-    //     if((Date.now() - user.createdAt) > expireIn) {
-    //         await user.remove();
-    //         return res.redirect("/");
-    //     }
-
-    //     user.active = true;
-    //     await user.save();
-    //     return res.send("<h1>Welcome Back!</h1>");
+const accountActivation = async (req, res, next) => {
+    const activationToken  = req.params.token;
+    
+    try {
+        const user = await Users.findOne({ activationToken : activationToken });
         
-    // } catch (error) {
-    //     res.sendStatus(404);
-    // }
+        if(!user){
+            const err = new Error('Invalid activation code');
+            err.statusCode = 422;
+            throw err;
+        };
+        const expireIn = 24 * 60 * 60 * 1000; // one day or 3600 seconds
+
+        if((Date.now() - user.expires) > expireIn) {
+            await user.remove();
+            return res.redirect('/signup');
+        }
+
+        user.confirmed = true;
+        user.activationToken = null
+        const savedUser =  await user.save();
+
+        // // Automatically log in user after registration
+        // const token = jwt.sign({ 
+        //     userId: savedUser._id.toString() },
+        //     process.env.JWT_KEY
+        // );
+  
+        // // Set cookie in the browser to store authentication state
+        // const maxAge = 1000 * 60 * 60 * 24 * 3; // 3 days
+        // res.cookie("token", token, {
+        //     httpOnly: true,
+        //     maxAge: maxAge,
+        //     domain: process.env.DOMAIN,
+        // });
+  
+        return res.status(201).json({
+            message : "Account have been activated!",
+            userId : savedUser._id.toString() 
+        });
+        
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // login
-const login = async (req, res ) => {  
+const login = async (req, res, next) => {  
     res.render('login');
 };
 
 // handleLogin  
-const handleLogin = async ( req, res ) => {
-    res.send('logged In');
-    console.log(req.body);
+const handleLogin = async ( req, res, next ) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        console.log("______________________________")
+        console.log(email)
+    
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          const err = new Error("Input validation failed.");
+          err.statusCode = 422;
+          err.data = errors.array();
+          throw err;
+        }
+    
+        const user = await Users.findOne({ email: "ykingssaurabh@gmail.com" });
+        if (!user) {
+          const err = new Error("Incorrect email");
+          err.statusCode = 404;
+          throw err;
+        }
+    
+        const isEqual = await bcrypt.compare(password, user.password);
+        if (!isEqual) {
+          const err = new Error("Incorrect password.");
+          err.statusCode = 401;
+          throw err;
+        }
+    
+        const token = jwt.sign(
+          { userId: user._id.toString() },
+          process.env.JWT_KEY
+        );
+    
+        // Set cookie in the browser to store authentication state
+        const maxAge = 1000 * 60 * 60; // 1 hour
+        res.cookie("token", token, {
+          httpOnly: true,
+          maxAge: maxAge,
+          domain: process.env.DOMAIN,
+        });
+    
+        res.status(201).json({
+          message: "User successfully logged in.",
+          token: token,
+          userId: user._id.toString(),
+        });
+      } catch (err) {
+        next(err);
+      }
 };
 
 // user dashboard

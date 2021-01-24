@@ -22,10 +22,14 @@ const UserSchema = new mongoose.Schema({
       required : true, 
       minlength : 8, 
     },
-    active: {
+    confirmed: {
       type: Boolean,
       required: true,
       default: false,
+    },
+    expires: {
+      type: Number,
+      default: Date.now()
     },
     activationToken: {
       type: String,

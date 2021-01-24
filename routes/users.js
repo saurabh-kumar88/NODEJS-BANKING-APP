@@ -32,7 +32,7 @@ router.get('/dashboard', userController.dashboard );
 
 
 router.get('/login', userController.login );
-router.post('/login', userController.handleLogin );
+router.post('/handle-login', userController.handleLogin );
 
 
 
