@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const { body } = require('express-validator');
 
-
 var userController = require('../controllers/userControllers');
 
 const emailValidator = body("email")

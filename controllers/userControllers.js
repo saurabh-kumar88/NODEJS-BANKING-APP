@@ -71,27 +71,29 @@ const handleSignup = async (req, res, next ) => {
 };
 
 const accountActivation = async (req, res) => {
-    const { token } = req.params;
+    const token  = req.params.token;
 
-    try {
-        const user = await Users.findOne({ token : token });
-        if(!user) return res.redirect("/");
-        const expireIn = 1000 * 60 * 60 * 60 * 24;
+    console.log('____________________________________')
+    console.log( req.params.token )
+    res.send('<h1>Welcome Back</h1>');
 
-        if((Date.now() - user.createdAt) > expireIn) {
-            await user.remove();
-            return res.redirect("/");
-        }
+    // try {
+    //     const user = await Users.findOne({ token : token });
+    //     if(!user) return res.redirect("/");
+    //     const expireIn = 1000 * 60 * 60 * 60 * 24;
 
-        user.active = true;
-        await user.save();
+    //     if((Date.now() - user.createdAt) > expireIn) {
+    //         await user.remove();
+    //         return res.redirect("/");
+    //     }
 
-        req.session.user = user;
-        return res.redirect("/");
+    //     user.active = true;
+    //     await user.save();
+    //     return res.send("<h1>Welcome Back!</h1>");
         
-    } catch (error) {
-        res.sendStatus(404);
-    }
+    // } catch (error) {
+    //     res.sendStatus(404);
+    // }
 }
 
 
@@ -109,10 +111,12 @@ const handleLogin = async ( req, res ) => {
 // user dashboard
 const dashboard = async (req, res) => {
 
-    if( !req.session.user || !req.session.user.confirmed) {
+    if( !req.session.user || !req.session.user.active ) {
         return res.redirect("/");
+    }else{
+        res.send("<h1>Welcome back</h1>");
     }
-    next();
+    
  }
 
 

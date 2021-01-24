@@ -19,7 +19,20 @@ app.use(cors());
 app.use(expressLayouts);
 
 
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+/** testcode */
+var session = require('express-session');
+
+
+app.get('/hello/:id', function(req, res){
+    console.log(req.params.id)
+    res.send("<h1>Welcome to dashboard!</h1>");
+});
+
+/**  */
+
 
 module.exports = app;

@@ -49,7 +49,7 @@ const emailConfirmationTemplate = (activationToken) => `
             <h1>Confirm Your Email</h1>
             <p>Welcome to <strong>notion.clone</strong>!</p>
             <p>Let's confirm your email address. Please click the button to confirm your email address and activate your account:</p>
-            <p><a class="button" href="http://localhost:3000/activateAccount?token=${activationToken}" target="_blank">Confirm Email Address</a></p>
+            <p><a class="button" href="http://localhost:3000/users/accountActivation/:token=${activationToken}" target="_blank">Confirm Email Address</a></p>
             <p>If you don't confirm your email address within the next 48 hours, your account will be deleted automatically.</p>
             <p style="margin-top: 40px;">
                 Cheers Konstantin 👋<br/>
