@@ -6,7 +6,6 @@ var userController = require('../controllers/userControllers');
 
 const emailValidator = body("email")
   .isEmail()
-  .normalizeEmail()
   .withMessage("Email Address is not valid.");
 const passwordValidator = body("password")
   .trim()

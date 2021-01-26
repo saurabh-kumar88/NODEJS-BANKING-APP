@@ -94,19 +94,19 @@ const accountActivation = async (req, res, next) => {
         user.activationToken = null
         const savedUser =  await user.save();
 
-        // // Automatically log in user after registration
-        // const token = jwt.sign({ 
-        //     userId: savedUser._id.toString() },
-        //     process.env.JWT_KEY
-        // );
+        // Automatically log in user after registration
+        const token = jwt.sign({ 
+            userId: savedUser._id.toString() },
+            process.env.JWT_KEY
+        );
   
-        // // Set cookie in the browser to store authentication state
-        // const maxAge = 1000 * 60 * 60 * 24 * 3; // 3 days
-        // res.cookie("token", token, {
-        //     httpOnly: true,
-        //     maxAge: maxAge,
-        //     domain: process.env.DOMAIN,
-        // });
+        // Set cookie in the browser to store authentication state
+        const maxAge = 1000 * 60 * 60 * 24 * 3; // 3 days
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: maxAge,
+            domain: process.env.DOMAIN,
+        });
   
         return res.status(201).json({
             message : "Account have been activated!",
@@ -129,9 +129,7 @@ const handleLogin = async ( req, res, next ) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-        console.log("______________________________")
-        console.log(email)
-    
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           const err = new Error("Input validation failed.");
@@ -140,7 +138,7 @@ const handleLogin = async ( req, res, next ) => {
           throw err;
         }
     
-        const user = await Users.findOne({ email: "ykingssaurabh@gmail.com" });
+        const user = await Users.findOne({ email: email });
         if (!user) {
           const err = new Error("Incorrect email");
           err.statusCode = 404;
