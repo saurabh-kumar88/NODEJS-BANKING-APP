@@ -1,24 +1,24 @@
-var nodemailer = require('nodemailer');
+const object1 = {
+  'name' : 'saurabh kumar',
+  'age' : '32',
+  'mobile' : '9718087950'
+}
 
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'saurabhkmr70@gmail.com',
-    pass: 'rovwvhyvtpcdximj'
-  }
-});
+const object2 = {
+  'name' : 'saurabh kumar',
+  'age' : '32',
+  'mobile' : '9718087950'
+}
 
-var mailOptions = {
-  from: 'saurabhkmr70@gmail.com',
-  to: 'ykings.saurabh@gmail.com',
-  subject: 'Email using Node.js',
-  text: 'That was easy!'
-};
+const s1 = "Saurabh";
+const s2 = "saurabh";
+// console.log( Object.is(s1, s2) );
+console.log( JSON.stringify(object1) === JSON.stringify(object2) );
+console.log( object1 === object2 );
+ 
+// if( Object.is(object1, object2)){
+//   console.log('true');
+// }else{
+//   console.log('false');
+// }
 
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
-});

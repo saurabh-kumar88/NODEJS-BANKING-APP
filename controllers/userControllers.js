@@ -61,8 +61,8 @@ const handleSignup = async (req, res, next ) => {
         },
         function(err, info){
             if(err) res.send(err);
-            else res.send(`<h1>An varification link has been sended to your email id ${user.email}</h1> <br>
-            <p>Please varify your email</p>`);
+            else res.send(`<h3>An varification link has been sended to your email id ${user.email}</h3>
+            <h2>Please varify your email</h2>`);
         });
 
         
