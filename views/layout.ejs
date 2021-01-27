@@ -9,6 +9,46 @@
       rel="stylesheet"
       href="https://bootswatch.com/4/journal/bootstrap.min.css"
     />
+
+    <style>
+      .navbar {
+        overflow: hidden;
+        background-color: #333;
+        position: fixed; /* Set the navbar to fixed position */
+        top: 0; /* Position the navbar at the top of the page */
+        width: 70%; /* Full width */
+      }
+
+      .navbar a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      }
+
+      /* Change background on mouse-over */
+      .navbar a:hover {
+      background: blue;
+      color: black;
+      }
+
+      /* Main content */
+      .main {
+      margin-top: 30px; /* Add a top margin to avoid content overlay */
+      }
+
+      .container {
+        margin-top: 5%;
+      }
+      .logo{
+        width: 10%;
+        height: 5%;
+      }
+
+    </style>
+
     <title>Node.js Banking App</title>
   </head>
   <body>
@@ -20,6 +60,7 @@
         <a class="navbar-brand" href="/users/signup">SignUp</a>
         <a class="navbar-brand" href="/about">About</a>
       </nav>
+      <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Node.js_logo_2015.svg/1200px-Node.js_logo_2015.svg.png">
     </div>
     <div class="container"><%- body %></div>
 
